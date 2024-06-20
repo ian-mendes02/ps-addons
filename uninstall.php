@@ -4,7 +4,7 @@
  * Cleanup routines to run on plugin uninstall.
  * @link       https://podoshop.com.br
  * @since      1.0.0
- * @package    Ps_Addons
+ * @package    Podoshop
  */
 
 // If uninstall not called from WordPress, then exit.
