@@ -1,0 +1,491 @@
+:root {
+  --ps-cor-1: #0986bf;
+  --ps-cor-2: #11e9de;
+  --ps-cor-3: #45f063;
+  --ps-cor-4: #1E3050;
+  --ps-cor-5: #0c6b96;
+  --ps-cor-6: #46c15c;
+  --ps-cor-7: #58a5f7;
+  --ps-info: #0986bf;
+  --ps-warn:#ffba00;
+  --ps-error: #cf5241;
+  --ps-metabox-border:#c0c0c0;
+  --ps-metabox-section-border:#eaeaea;
+  --ps-metabox-background:#ffffff;
+}
+
+.ps-inline-flex {
+  display: inline-flex;
+  align-items: center;
+}
+.ps-inline-flex h2 {
+  margin-right: 0.5rem;
+}
+
+table.ps-new-discount-container {
+  table-layout: auto;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  padding: 0;
+}
+table.ps-new-discount-container:has(#inline-edit-ps-new-discount) {
+  margin-bottom: 1rem;
+}
+table.ps-new-discount-container td, table.ps-new-discount-container th {
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+}
+table.ps-new-discount-container * {
+  word-wrap: break-word;
+}
+
+#inline-edit-ps-new-discount {
+  width: 100%;
+  border: solid 1px #bfbfbf;
+  background-color: #fff;
+}
+
+table.ps-list-table {
+  table-layout: auto;
+  width: 100%;
+  border: solid 1px #bfbfbf;
+  border-collapse: collapse;
+  border-spacing: 0;
+  padding: 0;
+  background-color: #fff;
+  color: #50575e;
+}
+table.ps-list-table td, table.ps-list-table th {
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+  font-weight: 400;
+}
+table.ps-list-table tr, table.ps-list-table thead {
+  position: relative;
+  border-bottom: solid 1px #bfbfbf;
+  text-align: left;
+}
+table.ps-list-table tr:hover .ps-list-item-controls, table.ps-list-table thead:hover .ps-list-item-controls {
+  display: block;
+}
+table.ps-list-table tfoot {
+  border-top: solid 1px #bfbfbf;
+}
+table.ps-list-table tr:last-of-type {
+  border-bottom: none;
+}
+table.ps-list-table tbody tr:nth-of-type(odd) {
+  background-color: #f6f7f7;
+}
+table.ps-list-table .ps-discount-name-data {
+  padding-bottom: 1.5rem;
+}
+table.ps-list-table .ps-list-item-controls {
+  font-size: 0.65rem;
+  position: absolute;
+  display: none;
+}
+table.ps-list-table .ps-list-item-controls a {
+  cursor: pointer;
+}
+table.ps-list-table .ps-list-item-controls a:hover {
+  text-decoration: underline;
+}
+table.ps-list-table * {
+  word-wrap: break-word;
+}
+table.ps-list-table .ps-slider-container {
+  vertical-align: middle;
+}
+
+#ps-inline-edit {
+  display: none;
+}
+
+.ps-inline-edit-wrapper {
+  width: 100%;
+  display: flow-root;
+}
+
+.ps-inline-edit-body {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding: 0.15rem;
+}
+
+.ps-inline-edit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding: 0.25rem;
+}
+
+[data-meta-field] {
+  padding: 0.5rem;
+  margin: 0.5rem;
+}
+[data-meta-field] legend {
+  font-weight: 600;
+  margin-right: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+[data-meta-field] .ps-inline-container, [data-meta-field] .ps-inline-wrapper {
+  position: relative;
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+[data-meta-field] .ps-inline-container label, [data-meta-field] .ps-inline-wrapper label {
+  width: max-content;
+  font-weight: 400;
+  margin-right: 0.75rem;
+}
+[data-meta-field] .ps-inline-container input, [data-meta-field] .ps-inline-container select, [data-meta-field] .ps-inline-wrapper input, [data-meta-field] .ps-inline-wrapper select {
+  width: 12rem;
+}
+[data-meta-field] .ps-inline-wrapper {
+  justify-content: space-between;
+  vertical-align: middle;
+  align-items: center;
+}
+[data-meta-field] .ps-inline-container {
+  flex-direction: column;
+}
+[data-meta-field] input[type=number], [data-meta-field] input[name$=value] {
+  width: 6rem;
+}
+[data-meta-field] .ps-selection-field {
+  border-radius: 4px;
+  border: 1px solid #8c8f94;
+  color: #2c3338;
+  line-height: 2;
+  min-height: 30px;
+  padding: 0.15rem;
+  overflow: hidden;
+  background-color: #fff;
+}
+[data-meta-field] .ps-selection-field input {
+  width: 100%;
+  background-color: #fff !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+[data-meta-field] .ps-selection-field ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+[data-meta-field] ul.ps-selected-products {
+  display: flex;
+  flex-flow: row wrap;
+}
+[data-meta-field] ul.ps-products-dropdown {
+  max-height: 16rem;
+  overflow-y: scroll;
+}
+[data-meta-field] ul.ps-products-dropdown li {
+  vertical-align: middle;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  background-color: #fff;
+}
+[data-meta-field] ul.ps-products-dropdown li:hover {
+  background-color: #0986bf;
+  color: #fff;
+}
+
+.ps-inline-col-left {
+  height: 100%;
+  float: left;
+}
+
+.ps-inline-col-right {
+  width: 50%;
+  height: 100%;
+  float: right;
+}
+
+.ps-included-products-container {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  padding: 0.75rem;
+}
+
+.ps-included-product {
+  background-color: var(--ps-cor-1);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.65rem;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  user-select: none;
+  vertical-align: middle;
+  width: max-content;
+  margin: 3px;
+}
+
+.ps-remove-selected-product {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  transition: 100ms ease-out;
+  margin: 0 0.25rem 0 0;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #0986bf;
+  transition: 150ms ease-out;
+  position: relative;
+}
+.ps-remove-selected-product:hover {
+  background-color: #0879ac;
+}
+.ps-remove-selected-product::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="%23ffffff" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>');
+  background-size: 90%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ps-discount-name {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.ps-button {
+  display: block;
+  border-radius: 9999px;
+  margin: auto 3px;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: 100ms ease-out;
+  position: relative;
+  cursor: pointer;
+}
+.ps-button.ps-edit {
+  cursor: pointer;
+  background-color: #0986bf;
+  transition: 150ms ease-out;
+  position: relative;
+}
+.ps-button.ps-edit:hover {
+  background-color: #0879ac;
+}
+.ps-button.ps-edit::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="%23ffffff" d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>');
+  background-size: 45%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.ps-button.ps-duplicate {
+  cursor: pointer;
+  background-color: #8fbc8f;
+  transition: 150ms ease-out;
+  position: relative;
+}
+.ps-button.ps-duplicate:hover {
+  background-color: #7ab07a;
+}
+.ps-button.ps-duplicate::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="%23ffffff" d="M208 0H332.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128h80v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z"/></svg>');
+  background-size: 45%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.ps-button.ps-delete {
+  cursor: pointer;
+  background-color: #ff6347;
+  transition: 150ms ease-out;
+  position: relative;
+}
+.ps-button.ps-delete:hover {
+  background-color: #ff4726;
+}
+.ps-button.ps-delete::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="%23ffffff" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>');
+  background-size: 45%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ps-spinner {
+  width: 12px;
+  height: 12px;
+  position: relative;
+}
+.ps-spinner::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" width="200" height="200" style="shape-rendering: auto; display: block; background: transparent;" xmlns:xlink="http://www.w3.org/1999/xlink"><g><g transform="rotate(0 50 50)"><rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.9166666666666666s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(30 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.8333333333333334s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(60 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.75s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(90 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.6666666666666666s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(120 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.5833333333333334s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(150 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.5s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(180 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.4166666666666667s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(210 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.3333333333333333s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(240 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.25s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(270 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.16666666666666666s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(300 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="-0.08333333333333333s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g transform="rotate(330 50 50)" > <rect fill="%230986bf" height="12" width="6" ry="6" rx="3" y="24" x="47" > <animate repeatCount="indefinite" begin="0s" dur="1s" keyTimes="0;1" values="1;0" attributeName="opacity" ></animate> </rect> </g><g></g></g></svg>');
+  background-size: 45%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ps-link-button {
+  --button-color: #2271b1;
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 3px;
+  margin: 0 1px;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--button-color);
+  font-size: 0.75rem;
+  transition: 100ms ease-out;
+  text-decoration: none;
+}
+.ps-link-button:hover {
+  --button-color: #1f6299;
+}
+.ps-link-button[data-action=cancel], .ps-link-button[data-action=create] {
+  color: var(--button-color);
+}
+.ps-link-button[data-action=save] {
+  background-color: var(--button-color);
+  color: #fff;
+}
+.ps-link-button[data-action=save].ps-disabled {
+  filter: grayscale(100%) opacity(50%);
+  pointer-events: none;
+  cursor: default;
+}
+
+.ps-tooltip {
+  display: inline;
+  position: absolute;
+  color: #fff;
+  top: 50%;
+  right: 0;
+  transform: translate(calc(100% + 0.5rem), -50%);
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.ps-tooltip::after {
+  font-size: 0.5rem;
+  content: "?";
+  display: inline-block;
+  text-align: center;
+  position: absolute;
+  width: 0.75rem;
+  height: 0.75rem;
+  line-height: 0.8rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  font-weight: 400;
+  border-radius: 999px;
+  background-color: rgba(29, 35, 39, 0.8);
+}
+.ps-tooltip p {
+  font-size: 0.65rem;
+  top: 50%;
+  right: 0;
+  transform: translate(105%, -50%);
+  position: absolute;
+  padding: 0.35rem;
+  min-width: 6rem;
+  max-width: 16rem;
+  border-radius: 0.25rem;
+  background-color: rgba(29, 35, 39, 0.8);
+  color: #fff;
+}
+
+.ps-slider {
+  --slider-width: 2rem;
+  --slider-color: #d4d3d3;
+  display: block;
+  position: relative;
+  width: var(--slider-width);
+  height: calc(var(--slider-width) / 2);
+}
+.ps-slider::before, .ps-slider::after {
+  content: "";
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+}
+.ps-slider::before {
+  background-color: var(--slider-color);
+  height: 100%;
+  width: 100%;
+  transition: 150ms ease-out;
+  cursor: pointer;
+}
+.ps-slider::after {
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: 150ms ease-out;
+  border-style: solid;
+  border-width: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-color: var(--slider-color);
+  height: 100%;
+  aspect-ratio: 1/1;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+}
+.ps-slider::after:hover {
+  background-color: #e6e6e6;
+}
+.ps-slider.active {
+  --slider-color: var(--ps-cor-1);
+}
+.ps-slider.active::after {
+  transform: translate(100%, -50%);
+}
+
+@media (max-width: 700px) {
+  .ps-inline-col-left, .ps-inline-col-right {
+    width: 100%;
+  }
+}
+
+/*# sourceMappingURL=admin.css.map */

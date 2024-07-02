@@ -2,29 +2,39 @@
 
 /**
  * Member-exclusive discount object.
- * @since      1.0.0
  * @package    Podoshop
  * @subpackage Podoshop/Classes
- * @author     Ian Mendes <ianlucamendes02@gmail.com>
+ *
+ * @since      1.0.0
  */
+
 class PS_Discount {
 
-    public $id;
     public $name;
     public $type;
+    public $author;
+    public $id;
+    public $expires_on;
     public $value;
+    public $created_on;
+    public $last_modified;
+    public $last_edited_by;
+    public $is_active;
     public $included_products;
+    public $priority;
 
-    /**
-     * Initialize discount object with correct attribute types.
-     * @since 1.0.0
-     * @param array $data
-     */
-    public function __construct($data) {
-        $this->id                = (int) $data['id'];
-        $this->name              = (string) $data['name'];
-        $this->type              = (string) $data['type'];
-        $this->value             = (float) $data['value'];
-        $this->included_products = json_decode(wp_unslash($data['included_products']), true);
+    public function __construct( $data = [] ) {
+        $this->id                = $data['id'] ?? null;
+        $this->name              = $data['name'] ?? '';
+        $this->type              = $data['type'] ?? 'fixed';
+        $this->author            = $data['author'] ?? '';
+        $this->created_on        = $data['created_on'] ?? '';
+        $this->last_modified     = $data['last_modified'] ?? '';
+        $this->last_edited_by    = $data['last_edited_by'] ?? '';
+        $this->expires_on        = $data['expires_on'] ?? '';
+        $this->value             = isset($data['value']) ? (float) $data['value'] : 0;
+        $this->is_active         = $data['is_active'] ?? 1;
+        $this->included_products = json_decode( $data['included_products'] ?? '[]');
+        $this->priority          = $data['priority'] ?? 0;
     }
 }

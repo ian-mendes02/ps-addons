@@ -2,112 +2,117 @@
 
 /**
  * Core plugin class.
- * @link       https://podoshop.com.br
- * @since      1.0.0
  * @package    Podoshop
  * @subpackage Podoshop/Classes
+ *
  * @author     Ian Mendes <ianlucamendes02@gmail.com>
+ *
+ * @link       https://podoshop.com.br
+ * @since      1.0.0
  */
-class Podoshop {
+final class Podoshop {
+    /**
+     * Plugin slug.
+     * @since 1.0.0
+     */
+    private $plugin_slug = 'ps';
 
-	/**
-	 * Plugin slug.
-	 * @since 1.0.0
-	 */
-	private $plugin_slug = 'ps';
+    /**
+     * Current plugin version.
+     * @since 1.0.0
+     */
+    private $version = '1.0.0';
 
-	/**
-	 * Current plugin version.
-	 * @since 1.0.0
-	 */
-	private $version = '1.0.0';
+    /**
+     * An instance of the class itself.
+     * @since 1.0.0
+     */
+    private static $instance = null;
 
-	/**
-	 * An instance of the class itself.
-	 * @since 1.0.0
-	 */
-	private static $instance = null;
+    /**
+     * Ajax handler.
+     * @var PS_Ajax
+     * @since 1.0.0
+     */
+    public $ajax;
 
-	/** 
-	 * Returns a new instance of the class itself.
-	 * @since 1.0.0
-	 */
-	public static function instance() {
-		if (is_null(self::$instance)) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
+    /**
+     * Admin functionality.
+     * @var PS_Admin
+     * @since 1.0.0
+     */
+    public $admin;
 
-	public function __construct() {
-		$this->define_constants();
-		$this->load_dependencies();
-		$this->define_hooks();
-	}
+    /**
+     * Static assets loader.
+     * @var PS_Loader
+     * @since 1.0.0
+     */
+    public $loader;
 
-	/**
-	 * Defines plugin constants.
-	 * @since 1.0.0
-	 */
-	private function define_constants() {
-		$this->define('PS_ABSPATH', plugin_dir_path(PS_PLUGIN_FILE));
-		$this->define('PS_PLUGIN_URL', plugin_dir_url(PS_PLUGIN_FILE));
-		$this->define('PS_PLUGIN_BASENAME', plugin_basename(PS_PLUGIN_FILE));
-		$this->define('PS_VERSION', $this->version);
-		$this->define('PS_SLUG', $this->plugin_slug);
-	}
+    /**
+     * Ensures a single instance of the plugin class is loaded.
+     * @since 1.0.0
+     */
+    public static function instance() {
+        if ( is_null( self::$instance ) ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
-	/**
-	 * Loads plugin dependencies.
-	 * @since 1.0.0
-	 */
-	private function load_dependencies() {
-		include_once PS_ABSPATH . 'includes/ps-functions.php';
-		include_once PS_ABSPATH . 'includes/class-ps-ajax.php';
-		include_once PS_ABSPATH . 'includes/class-ps-loader.php';
-		include_once PS_ABSPATH . 'includes/class-ps-discount.php';
-		include_once PS_ABSPATH . 'includes/class-ps-activator.php';
-		include_once PS_ABSPATH . 'includes/admin/class-ps-admin.php';
-		include_once PS_ABSPATH . 'includes/class-ps-deactivator.php';
-		include_once PS_ABSPATH . 'includes/class-ps-discount-manager.php';
-	}
+    private function __construct() {
+        $this->define_constants();
+        $this->include();
+        $this->init_hooks();
+    }
 
-	/**
-	 * Initializes plugin hooks.
-	 * @since 1.0.0
-	 */
-	private function init_hooks() {
+    /**
+     * Defines plugin constants.
+     * @since 1.0.0
+     */
+    private function define_constants() {
+        $this->define( 'PS_ABSPATH', plugin_dir_path( PS_PLUGIN_FILE ) );
+        $this->define( 'PS_PLUGIN_URL', plugin_dir_url( PS_PLUGIN_FILE ) );
+        $this->define( 'PS_PLUGIN_BASENAME', plugin_basename( PS_PLUGIN_FILE ) );
+        $this->define( 'PS_ASSETS_FOLDER', PS_PLUGIN_URL . 'includes/assets/' );
+        $this->define( 'PS_VERSION', $this->version );
+        $this->define( 'PS_SLUG', $this->plugin_slug );
+    }
 
-		register_activation_hook(__FILE__, ['PS_Activator', 'activate']);
-		register_deactivation_hook(__FILE__, ['Ps_Deactivator', 'deactivate']);
+    /**
+     * Includes core plugin files.
+     * @since 1.0.0
+     */
+    private function include() {
+        include_once PS_ABSPATH . 'includes/ps-functions.php';
+        include_once PS_ABSPATH . 'includes/class-ps-ajax.php';
+        include_once PS_ABSPATH . 'includes/class-ps-loader.php';
+        include_once PS_ABSPATH . 'includes/class-ps-discount.php';
+        include_once PS_ABSPATH . 'includes/class-ps-customer.php';
+        include_once PS_ABSPATH . 'includes/admin/class-ps-admin.php';
+        include_once PS_ABSPATH . 'includes/class-ps-discount-manager.php';
+    }
 
-		$ps_ajax = new PS_Ajax();
-		$ps_admin = new PS_Admin();
-		$ps_loader = new PS_Loader();
+    /**
+     * Initializes plugin hooks.
+     * @since 1.0.0
+     */
+    private function init_hooks() {
+        $this->ajax     = PS_Ajax::instance();
+        $this->admin    = PS_Admin::instance();
+        $this->loader   = PS_Loader::instance();
+    }
 
-		add_action('woocommerce_cart_calculate_fees', ['PS_Discount_Manager', 'apply_discount']);
-		add_filter('woocommerce_product_data_store_cpt_get_products_query', [$ps_ajax, 'product_like_name'], 10, 2);
-		add_action('admin_enqueue_scripts', [$ps_admin, 'enqueue_assets']);
-		add_action('admin_menu', [$ps_admin, 'register_admin_menus']);
-		
-		$ps_loader->enqueue_script('ps-components');
-		$ps_loader->init();
+    /**
+     * Defines a constant if not already set.
+     * @param string      $name  Constant name.
+     * @param string|bool $value Constant value.
+     */
+    private function define( $name, $value ) {
+        if ( ! defined( $name ) ) {
+            define( $name, $value );
+        }
+    }
 
-        $ps_ajax->add('get_products');
-		$ps_ajax->add('product_lookup');
-		$ps_ajax->add('update_discounts');
-		$ps_ajax->add('delete_discount');
-		$ps_ajax->init();
-	}
-
-	/**
-	 * Defines a constant if not already set.
-	 * @param string      $name  Constant name.
-	 * @param string|bool $value Constant value.
-	 */
-	private function define($name, $value) {
-		if (!defined($name)) {
-			define($name, $value);
-		}
-	}
 }
