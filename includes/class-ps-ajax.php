@@ -35,8 +35,9 @@ class PS_Ajax {
         $posts    = [];
         foreach ( $products as $product ) {
             array_push( $posts, [
-                "id"      => $product->get_id(),
-                "name"    => $product->get_name(),
+                "slug" => $product->get_slug(),
+                "id"   => $product->get_id(),
+                "name" => $product->get_name(),
             ] );
         }
         return $posts;

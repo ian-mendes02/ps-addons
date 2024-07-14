@@ -9,7 +9,6 @@
  */
 
 class PS_Discount {
-
     public $name;
     public $type;
     public $author;
@@ -32,9 +31,9 @@ class PS_Discount {
         $this->last_modified     = $data['last_modified'] ?? '';
         $this->last_edited_by    = $data['last_edited_by'] ?? '';
         $this->expires_on        = $data['expires_on'] ?? '';
-        $this->value             = isset($data['value']) ? (float) $data['value'] : 0;
+        $this->value             = isset( $data['value'] ) ? (float) $data['value'] : 0;
         $this->is_active         = $data['is_active'] ?? 1;
-        $this->included_products = json_decode( $data['included_products'] ?? '[]');
-        $this->priority          = $data['priority'] ?? 0;
+        $this->included_products = json_decode( $data['included_products'] ?? '[]', true );
+        $this->priority          = isset( $data['priority'] ) ? (int) $data['priority'] : 0;
     }
 }

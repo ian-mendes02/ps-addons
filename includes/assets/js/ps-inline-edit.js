@@ -1,4 +1,4 @@
-( function( $, discount_data, ajax_url ) {
+( function( $, discount_data, ajax_url, loading_url ) {
 
     window.ps ??= {};
     window.ps.inline_edit = {};
@@ -15,23 +15,18 @@
                 copy: row.find( 'a[data-action=copy]' ),
                 delete: row.find( 'a[data-action=delete]' ),
                 toggle: row.find( '[name="discount_active"]' )
-            };
+            }
+            , wp_json_parse = r => r.slice( -1 ) == 0 && JSON.parse( r.slice( 0, -1 ) )
+            , is_obj = ( o1, o2 ) => JSON.stringify( o1 ) == JSON.stringify( o2 );
 
-        /**
-         * Parse WordPress ajax response.
-         * @since 1.0.0
-         */
-        function wp_json_parse( response ) {
-            if ( response.slice( -1 ) == 0 )
-                return JSON.parse( response.slice( 0, -1 ) );
-        }
-
-        /**
-         * Compares two objects for equality.
-         * @since 1.0.0
-         */
-        function is_obj( arg1, arg2 ) {
-            return JSON.stringify( arg1 ) === JSON.stringify( arg2 );
+        function loading( width = 24, className = '' ) {
+            return `<img 
+                src='${loading_url}' 
+                width='${width}px' 
+                height='${width}px'
+                class='${className}'
+                draggable='false' 
+            />`;
         }
 
         /**
@@ -42,9 +37,10 @@
             window.ps.inline_edit.data = get_field_data();
             var row_edit = $( '#' + inline_id )
                 , save = row_edit.find( '[data-action=save]' )
-                , inline = window.ps.inline_edit;
-            if ( is_obj( inline._data, inline.data ) ) save.addClass( 'ps-disabled' );
-            else save.removeClass( 'ps-disabled' );
+                , inline = window.ps.inline_edit
+                , change = !is_obj( inline._data, inline.data );
+            change ? save.removeClass( 'ps-disabled' ) : save.addClass( 'ps-disabled' );
+            return change;
         }
 
         /**
@@ -101,40 +97,56 @@
             query.length < 2
                 ? dropdown.empty().hide()
                 : ( params = {action: 'product_lookup', query: query, limit: 5},
+                    dropdown.show().html( `<span class="ps-full ps-center">${loading()}</span>` ),
                     $.post( ajax_url, params, function( res ) {
                         if ( res && res.length != 0 ) {
                             prods = wp_json_parse( res );
+                            dropdown.empty();
                             // Render queried products to list
-                            for ( let prod of prods ) dropdown.append( list_item( prod ) );
-                            // Display dropdown menu
-                            dropdown.show();
+                            for ( let prod of prods )
+                                dropdown.append( list_item( prod ) );
                         } else if ( res.length == 0 ) dropdown.empty();
                     } ) );
-        }
+        };
+
+        /**
+         * Bind functions to keypresses.
+         * @since 1.0.0
+         */
+        const keybind = e => {
+            e.key == 'Enter' && save();
+            e.key == 'Escape' && cancel();
+        };
 
         /**
          * Save changes and reload page if successful.
          * @since 1.0.0
          */
         function save() {
-            var data = window.ps.inline_edit.data, params;
-            data.is_active = is_edit ? ( controls.toggle.hasClass( 'active' ) ? 1 : 0 ) : 1;
-            !data.name || data.name == ''
-                ? alert( 'O campo \'Nome\' não pode ficar em branco.' )
-                : ( params = {action: 'submit_discount', data: data},
-                    $.post( ajax_url, params, function( res ) {
-                        var data = wp_json_parse( res );
-                        data != 1
-                            ? data.status == 'error' && console.log( data.message )
-                            : location.reload();
-                    } ) );
+            if ( update_data() ) {
+                $( loading() ).insertBefore( $( this ) );
+                var data = window.ps.inline_edit.data, params;
+                data.is_active = is_edit ? ( controls.toggle.hasClass( 'active' ) ? 1 : 0 ) : 1;
+                if ( !data.name || data.name == '' ) {
+                    alert( 'O campo \'Nome\' não pode ficar em branco.' );
+                } else {
+                    params = {action: 'submit_discount', data: data},
+                        $.post( ajax_url, params, function( res ) {
+                            var data = wp_json_parse( res );
+                            data != 1
+                                ? data.status == 'error' && alert( data.message )
+                                : location.reload();
+                        } );
+                };
+            }
         };
 
         /**
-         * Cancel editing and dismiss form.
+         * Cancel editing, dismiss form and unbind event keys.
          * @since 1.0.0
          */
         function cancel() {
+            $( document ).off( 'keydown', keybind );
             $( '#ps-new-discount-header' ).remove();
             // Dismiss and remove form.
             $( '#' + inline_id ).siblings( 'tr.hidden' ).addBack().remove();
@@ -182,10 +194,8 @@
 
             // Collapse sibling rows and discard changes
             $( 'tr[data-discount-id]' ).each( function() {
-                var t = $( this );
                 $( '[id^="inline-edit-"]' ).siblings( 'tr.hidden' ).addBack().remove();
-                t.show();
-                t.removeClass( 'active' );
+                $( this ).show().removeClass( 'active' );
             } );
 
             // Empty global inline object
@@ -219,10 +229,6 @@
                 fields.schedule.val( discount.expires_on.replace( ' ', 'T' ) )
             );
 
-            // Attach save and cancel listeners
-            row_edit.find( '[data-action=save]' ).on( 'click', save );
-            row_edit.find( '[data-action=cancel]' ).on( 'click', cancel );
-
             var dropdown = row_edit.find( '.ps-products-dropdown' ),
                 lookup = row_edit.find( '[name="product_name"]' );
 
@@ -243,7 +249,7 @@
                 var t = $( this );
                 fields.type.val() == 'percent' && t.val() > 100 && t.val( 100 );
             } );
-            $( document ).on( 'click', function( e ) {
+            $( document ).on( 'click', e => {
                 var t = $( e.target );
                 !t.parent().is( dropdown ) && !t.is( lookup ) && !t.is( dropdown ) && (
                     dropdown.hide(),
@@ -260,6 +266,10 @@
             // Render existing included products.
             render_selected( inc_prods );
 
+            // Attach save and cancel listeners
+            row_edit.find( '[data-action=save]' ).on( 'click', save );
+            row_edit.find( '[data-action=cancel]' ).on( 'click', cancel );
+            $( document ).on( 'keydown', keybind );
         };
 
         /**
@@ -267,34 +277,47 @@
          * @since 1.0.0
          */
         function duplicate_discount() {
-            $.post( ajax_url, {action: 'duplicate_discount', id: id}, () => location.reload() );
-        }
+            var tp = $( this ).parent(), ld = $( loading( 12 ) );
+            tp.append( ld );
+            $.post( ajax_url, {action: 'duplicate_discount', id: id}, () => {
+                tp.remove();
+                location.reload();
+            } ).catch( () => tp.remove() );
+        };
 
         /**
          * Delete current row.
          * @since 1.0.0
          */
         function delete_discount() {
-            var params;
-            confirm( 'Excluir o item?\n(Essa ação não pode ser desfeita)' ) && (
+            var params, tp = $( this ).parent(), ld = $( loading( 12 ) );
+            confirm( `Excluir o item '${discount.name}'?\n(Essa ação não pode ser desfeita)` ) && (
+                tp.append( ld ),
                 params = {action: 'delete_discount', id: id},
-                $.post( ajax_url, params, () => location.reload() )
+                $.post( ajax_url, params, () => {
+                    tp.remove();
+                    location.reload();
+                } ).catch( () => tp.remove() )
             );
-        }
+        };
 
         /**
          * Update 'is_active' data without reloading the page.
          * @since 1.0.0
          */
         function update_status() {
-            var t = $( this );
-            t.toggleClass( 'active' );
+            var t = $( this ), ld = $( `<span class='ps-append-left'>${loading( 16 )}</span>` );
+            t.parent().append(ld);
             $.post( ajax_url, {
                 action: 'update_discount_status',
                 id: id,
-                is_active: t.hasClass( 'active' ) ? 1 : 0
-            } );
-        }
+                is_active: t.hasClass( 'active' ) ? 0 : 1
+            }, () => {
+                t.toggleClass( 'active' );
+                ld.remove();
+            } ).catch( () => ld.remove() );
+        };
+
         //Attach event listeners for current row.
         controls.copy.on( 'click', duplicate_discount );
         controls.edit.on( 'click', edit_discount );
@@ -302,6 +325,8 @@
         controls.toggle.on( 'click', update_status );
 
     } );
+
     $( '.ps-tooltip' ).on( 'mouseenter', function() {$( this ).find( 'p' ).show();} );
     $( '.ps-tooltip' ).on( 'mouseleave', function() {$( this ).find( 'p' ).hide();} );
-}( jQuery, ps_ajax.discount_data, ps_ajax.ajax_url ) );
+
+}( jQuery, ps_ajax.discount_data, ps_ajax.ajax_url, ps_ajax.loading_url ) );

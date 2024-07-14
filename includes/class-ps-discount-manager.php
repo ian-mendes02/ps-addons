@@ -11,22 +11,40 @@
  */
 class PS_Discount_Manager {
     /**
-     * Applies member discounts to applicable products.
+     * An instance of this class.
      * @since 1.0.0
-     *
-     * @param WC_Cart $cart passed from `woocommerce_cart_calculate_fees` hook.
      */
-    public static function apply_discount( $cart ) {
-        if ( ps_customer()->is_member() ) {
-            foreach ( $cart->get_cart() as $cart_item ) {
-                $product_id = $cart_item['product_id'];
-                if ( in_array( $product_id, $discounted_products ) ) {
-                    $price    = $cart_item['data']->get_price();
-                    $discount = $price - ( ( $discount_percentage / 100 ) * $price );
-                    $cart->add_fee( 'Desconto Palmilhando®', -$discount );
-                }
-            }
+    protected static $instance;
+
+    /**
+     * Is AWL Plugin currently installed and active.
+     * @since 1.0.0
+     */
+    private $is_awl_active;
+
+    /**
+     * Effective discount objects.
+     * @var array
+     * @since 1.0.0
+     */
+    public $discounts;
+
+    /**
+     * Ensures a single intance of this class is loaded.
+     * @since 1.0.0
+     */
+    public static function instance() {
+        if ( is_null( self::$instance ) ) {
+            self::$instance = new self();
         }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        $this->is_awl_active = class_exists( 'AWL_Main' );
+        $this->discounts     = [];
+        $this->get_effective_discounts();
+        $this->init_hooks();
     }
 
     /**
@@ -50,7 +68,7 @@ class PS_Discount_Manager {
     public static function duplicate_discount() {
         if ( isset( $_POST['id'] ) ) {
             $discount       = self::get_single_discount( $_POST['id'] );
-            $discount->name = $discount->name . ' (cópia)';
+            $discount->name = 'Cópia de ' . $discount->name;
             $discount->id   = null;
             $submit         = self::submit_discount( (array) $discount );
             PS_Ajax::respond( ['status' => $submit ? 'ok' : 'error'] );
@@ -61,11 +79,16 @@ class PS_Discount_Manager {
      * Gets discount data from database.
      * @since 1.0.0
      */
-    public static function get_discounts() {
+    public static function get_discounts( $active_only = false, $order_by = 'created_on', $order = 'ASC' ) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'member_discounts';
-        $results    = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A );
-        $discounts  = [];
+
+        $query = "SELECT * FROM $table_name";
+        $active_only && $query .= " WHERE is_active = 1";
+        $query .= " ORDER BY $order_by $order";
+
+        $results   = $wpdb->get_results( $query, ARRAY_A );
+        $discounts = [];
         foreach ( $results as $result ) array_push( $discounts, new PS_Discount( $result ) );
         return $discounts;
     }
@@ -77,11 +100,11 @@ class PS_Discount_Manager {
      *
      * @param int $id
      */
-    public static function get_single_discount( $discount_id = null ) {
+    public static function get_single_discount( $id = null ) {
         global $wpdb;
-        if ( ! is_null( $discount_id ) && $discount_id != '' ) {
+        if ( ! is_null( $id ) && $id != '' ) {
             $table_name = $wpdb->prefix . 'member_discounts';
-            $query      = $wpdb->get_row( "SELECT * FROM $table_name WHERE id = $discount_id", ARRAY_A );
+            $query      = $wpdb->get_row( "SELECT * FROM $table_name WHERE id = $id", ARRAY_A );
             return new PS_Discount( $query );
         }
         return new PS_Discount();
@@ -118,7 +141,7 @@ class PS_Discount_Manager {
 
             $date = date( 'Y-m-d H:i:s' );
             if ( $discount->name != $post_data['name'] && $query_names != 0 ) {
-                PS_Ajax::respond( ['status' => 'error', 'message' => 'name exists'] );
+                PS_Ajax::respond( ['status' => 'error', 'message' => 'Um item com esse nome já existe.'] );
                 return;
             } else {
                 $included_products = '[]';
@@ -172,7 +195,79 @@ class PS_Discount_Manager {
             PS_Ajax::respond( $query );
         }
     }
-}
 
-// Hooks in methods once file is included
-add_action( 'woocommerce_cart_calculate_fees', ['PS_Discount_Manager', 'apply_discount'] );
+    /**
+     * Get effective discount data.
+     * Effective discounts are marked as active and within expiration date.
+     * Discounts with the same priority value will be overwritten by the most recent.
+     * @since 1.0.0
+     */
+    public function get_effective_discounts() {
+        foreach ( self::get_discounts( true, 'priority' ) as $discount ) {
+            if ( strtotime( $discount->expires_on ) < time() ) {
+                foreach ( $discount->included_products as $prod ) {
+                    $this->discounts[$prod['id']] = [
+                        'type'  => $discount->type,
+                        'value' => $discount->value,
+                    ];
+                }
+            }
+        }
+    }
+
+    /**
+     * Applies valid discounts to elegible products in cart.
+     * @since 1.0.0
+     *
+     * @param WC_Cart $cart passed from `woocommerce_cart_calculate_fees` hook.
+     */
+    public function apply_discounts_to_cart( $cart ) {
+        $total = 0;
+        // Calculate total discount value
+        foreach ( $cart->get_cart() as $cart_item => $values ) {
+            $id = $values['product_id'];
+            if ( isset( $this->discounts[$id] ) ) {
+                $discount = $this->discounts[$id]['value'];
+                $price    = $values['data']->get_price();
+                if ( $this->discounts[$id]['type'] == 'percent' ) {
+                    $discount = $price - ( ( $discount / 100 ) * $price );
+                }
+                $total -= $discount;
+            }
+        }
+
+        // Apply discount to cart if current user is member
+        // Print potential savings otherwise
+        if ( $total < 0 ) {
+            if ( PS_Customer::instance()->is_member() ) {
+                $cart->add_fee( 'Desconto Palmilhando®', $total );
+            } else {
+                add_action( 'woocommerce_proceed_to_checkout', function () use ( $total ) {
+                    $d = ps_format_value( str_replace( "-", "", (string) round( $total, 2 ) ) );
+                    ps_push_subscribe( $d );
+                } );
+            }
+        }
+    }
+
+    /**
+     * Adds labels to store loop on elegible products.
+     * @since 1.0.0
+     */
+    public function print_discounts_to_store_loop() {
+        global $product;
+        if ( PS_Customer::instance()->is_member() && isset( $this->discounts[$product->get_id()] ) ) {
+            print( '<span class="ps-discount"></span>' );
+        }
+    }
+
+    /**
+     * Hooks in methods.
+     * @since 1.0.0
+     */
+    public function init_hooks() {
+        add_action( 'woocommerce_cart_calculate_fees', [$this, 'apply_discounts_to_cart'] );
+        add_action( 'woocommerce_before_shop_loop_item', [$this, 'print_discounts_to_store_loop'] );
+    }
+
+}

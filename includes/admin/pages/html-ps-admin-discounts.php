@@ -1,3 +1,5 @@
+<?php defined('ABSPATH') || exit; ?>
+
 <div class="wrap">
     <table class="ps-new-discount-container">
         <tr id="ps-new-discount" data-discount-id="" data-row-action="create">
@@ -29,9 +31,9 @@
                             <div>
                                 <span><?php echo esc_html( $discount->name ); ?></span>
                                 <div class="ps-list-item-controls">
-                                    <a data-action="edit">Editar</a> |
-                                    <a data-action="copy">Duplicar</a> |
-                                    <a data-action="delete">Excluir</a>
+                                    <a data-action="edit">Editar</a>&nbsp;|
+                                    &nbsp;<a data-action="copy">Duplicar</a>&nbsp;|
+                                    &nbsp;<a data-action="delete">Excluir</a>
                                 </div>
                             </div>
                         </td>
@@ -91,7 +93,7 @@
                                 <div class="ps-inline-wrapper">
                                     <label>Prioridade</label>
                                     <input type="number" min="0" max="999" step="1" value="0" name="discount_priority" placeholder="0-999">
-                                    <?php ps_tooltip( 'O número deve ser um valor de 0 a 999 e não pode ser negativo. Números maiores terão prioridade sobre números menores. O valor padrão é 0.' );?>
+                                    <?php ps_tooltip( 'O número deve ser um valor de 0 a 999 e não pode ser negativo. Números menores terão prioridade sobre números maiores. Se dois descontos tiverem a mesma prioridade, o desconto criado mais recentemente será priorizado.' );?>
                                 </div>
                             </fieldset>
                         </div>

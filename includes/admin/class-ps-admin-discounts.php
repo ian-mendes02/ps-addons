@@ -9,7 +9,7 @@ class PS_Admin_Discounts extends PS_Admin_Page {
         $this->parent_slug = 'ps_admin';
         $this->page_title  = 'Descontos';
         $this->menu_title  = 'Descontos';
-        if ( ps_var($_GET['page'], $this->menu_slug) ) {
+        if ( ps_var( $_GET['page'], $this->menu_slug ) ) {
             add_action( 'admin_enqueue_scripts', [$this, 'enqueue_assets'] );
         }
     }
@@ -18,7 +18,8 @@ class PS_Admin_Discounts extends PS_Admin_Page {
 
         wp_localize_script( 'ps-inline-edit', 'ps_ajax', [
             'ajax_url'      => admin_url( 'admin-ajax.php' ),
-            'discount_data' => PS_Discount_Manager::get_discounts()
+            'discount_data' => PS_Discount_Manager::get_discounts(),
+            'loading_url'   => PS_ASSETS_FOLDER . 'img/ps-spinner.svg',
         ] );
     }
 }

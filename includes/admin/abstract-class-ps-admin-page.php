@@ -23,6 +23,6 @@ abstract class PS_Admin_Page {
     }
 
     public function get_template() {
-        include $this->get_template_name();
+        include_once $this->get_template_name();
     }
 }

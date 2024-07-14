@@ -25,13 +25,17 @@ if ( ! defined( 'PS_PLUGIN_FILE' ) ) {
     define( 'PS_PLUGIN_FILE', __FILE__ );
 }
 
+if ( ! defined( 'PS_ROOT' ) ) {
+    define( 'PS_ROOT', plugin_dir_path(__FILE__) );
+}
+
 function ps_activate() {
-    include_once PS_ABSPATH . 'includes/class-ps-activator.php';
+    include_once __DIR__ . '/includes/class-ps-activator.php';
     PS_Activator::activate();
 }
 
 function ps_deactivate() {
-    include_once PS_ABSPATH . 'includes/class-ps-deactivator.php';
+    include_once __DIR__ . '/includes/class-ps-deactivator.php';
     PS_Deactivator::deactivate();
 }
 

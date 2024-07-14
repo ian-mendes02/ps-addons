@@ -30,13 +30,6 @@ final class Podoshop {
     private static $instance = null;
 
     /**
-     * Ajax handler.
-     * @var PS_Ajax
-     * @since 1.0.0
-     */
-    public $ajax;
-
-    /**
      * Admin functionality.
      * @var PS_Admin
      * @since 1.0.0
@@ -44,11 +37,11 @@ final class Podoshop {
     public $admin;
 
     /**
-     * Static assets loader.
-     * @var PS_Loader
+     * Controller for discount operations.
+     * @var PS_Discount_Manager
      * @since 1.0.0
      */
-    public $loader;
+    public $discount_manager;
 
     /**
      * Ensures a single instance of the plugin class is loaded.
@@ -88,6 +81,7 @@ final class Podoshop {
         include_once PS_ABSPATH . 'includes/ps-functions.php';
         include_once PS_ABSPATH . 'includes/class-ps-ajax.php';
         include_once PS_ABSPATH . 'includes/class-ps-loader.php';
+        include_once PS_ABSPATH . 'includes/ps-user-functions.php';
         include_once PS_ABSPATH . 'includes/class-ps-discount.php';
         include_once PS_ABSPATH . 'includes/class-ps-customer.php';
         include_once PS_ABSPATH . 'includes/admin/class-ps-admin.php';
@@ -99,9 +93,14 @@ final class Podoshop {
      * @since 1.0.0
      */
     private function init_hooks() {
-        $this->ajax     = PS_Ajax::instance();
-        $this->admin    = PS_Admin::instance();
-        $this->loader   = PS_Loader::instance();
+
+        add_action( 'wp_enqueue_scripts', ['PS_Loader', 'load_scripts'] );
+        add_action( 'wp_enqueue_scripts', ['PS_Loader', 'load_styles'] );
+
+        // These classes set up hooks on instantiation
+        $this->admin = PS_Admin::instance();
+        $this->discount_manager = PS_Discount_Manager::instance();
+        PS_Ajax::instance();
     }
 
     /**

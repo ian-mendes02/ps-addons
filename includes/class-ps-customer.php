@@ -11,6 +11,25 @@
  */
 
 class PS_Customer extends WP_User {
+    /**
+     * An intance of the class.
+     * @var PS_Customer
+     * @since 1.0.0
+     */
+    private static $instance;
+
+    /**
+     * Enables referencing a single instance of this class in a script.
+     * @since 1.0.0
+     *
+     * @return PS_Customer
+     */
+    public static function instance( $id = null ) {
+        if ( null === self::$instance ) {
+            self::$instance = new self( $id );
+        }
+        return self::$instance;
+    }
 
     /**
      * Fetch TheMembers API token.
@@ -50,7 +69,6 @@ class PS_Customer extends WP_User {
             $user_id = get_current_user_id();
         }
         parent::__construct( $user_id );
-        add_action( 'user_register', [$this, 'verify_membership'] );
     }
 
     /**
@@ -58,7 +76,7 @@ class PS_Customer extends WP_User {
      * @since 1.0.0
      */
     public function promote() {
-        $this->set_role( get_option('member_role_slug', 'administrator') );
+        $this->set_role( get_option( 'ps_member_role' ) );
     }
 
     /**
@@ -66,8 +84,10 @@ class PS_Customer extends WP_User {
      * @since 1.0.0
      */
     public function is_member() {
-        $member_role = get_option('member_role_slug', 'administrator');
-        return in_array( $member_role, $this->roles );
+        $member_role = get_option( 'ps_member_role' );
+        $is_member   = is_array( $this->roles )
+            ? in_array( $member_role, $this->roles )
+            : $member_role === $this->roles;
     }
 
     /**
@@ -76,7 +96,11 @@ class PS_Customer extends WP_User {
      * @since 1.0.0
      */
     public function verify_membership() {
-        if ( in_array( $this->roles, "customer" ) ) {
+        $default_role = get_option( 'default_role', 'customer' );
+        $is_default   = is_array( $this->roles )
+            ? in_array( $default_role, $this->roles )
+            : $default_role === $this->roles;
+        if ( $is_default ) {
             $TM_MAIL_URL       = "https://registration.themembers.dev.br/api/users/show-email/";
             $TM_PLATFORM_TOKEN = "b3ce71cb-c406-4e43-971b-62ab1490f73a";
             $auth_token        = self::get_tm_auth_token();

@@ -8,14 +8,6 @@
  */
 
 /**
- * Returns a new PS_Customer object.
- * @since 1.0.0
- */
-function ps_customer() {
-    return new PS_Customer();
-}
-
-/**
  * Formats datetime strings.
  * @since 1.0.0
  *
@@ -73,10 +65,39 @@ function ps_tooltip( $message ) {
  * @param string       $type
  */
 function ps_format_value( $val, $type = 'fixed' ) {
-    $num = explode( '.', strval( $val ) );
-    $int = $num[0];
-    $dec = $num[1] ?? 0;
+    $num                      = explode( '.', strval( $val ) );
+    $int                      = $num[0];
+    $dec                      = $num[1] ?? 0;
     if ( (int) $dec < 10 ) $dec = '0' . $dec;
-    if ( $type == 'fixed' ) return "R$$int.$dec";
+    if ( $type == 'fixed' ) return "R$ $int.$dec";
     else return "$int.$dec%";
+}
+
+/**
+ * Prints a subscription prompt,
+ * @since 1.0.0
+ *
+ * @param string $d
+ */
+function ps_push_subscribe( $d ) {
+    print( "
+        <span class='ps-subscribe'>
+            <span>Com o Palmilhando® você economiza <strong>$d</strong></span>
+            <a href='https://palmilhando.com.br/assinatura/' target='_blank'>Saiba mais.</a>
+        </span>
+    " );
+}
+
+/**
+ * Logs message to file.
+ * @since 1.0.0
+ */
+function ps_log( $origin, $line = null, $content = 'undefined' ) {
+    date_default_timezone_set( 'America/Sao_Paulo' );
+    $time  = date( 'Y-m-d H:i:s' );
+    $file  = PS_ROOT . 'ps.log';
+    $log   = "[$time]: $content in $origin" . ( ! empty( $line ) && ":$line" );
+    $open  = fopen( $file, "a" );
+    $write = fputs( $open, $log );
+    fclose( $open );
 }

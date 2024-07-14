@@ -14,6 +14,8 @@ class PS_Activator {
      */
     public static function activate() {
         self::create_tables();
+        self::add_options();
+        self::create_roles();
     }
 
     private static function create_tables() {
@@ -39,5 +41,16 @@ class PS_Activator {
             ) $collate;";
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
+    }
+
+    private static function add_options() {
+        add_option( 'ps_member_role', '', '', 'yes' );
+    }
+
+    private static function create_roles() {
+        $base_role = get_role( get_option( 'default_role', 'customer' ) );
+        $base_caps = $base_role->capabilities;
+        add_role( 'ps_member', 'Assinante Podoshop', $base_caps );
+        update_option( 'ps_member_role', 'ps_member' );
     }
 }
