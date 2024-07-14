@@ -1,10 +1,10 @@
 node_modules
 postcss.config.js
-**/*.map
-**/*.scss
+*.map
+*.scss
 package-lock.json
 package.json
 jsconfig.json
 gulpfile.js
-**/*.py
-**/*.log
+*.py
+*.log
